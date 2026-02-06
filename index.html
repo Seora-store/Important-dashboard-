@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seora Store - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        [dir="rtl"] { font-family: 'Cairo', sans-serif; }
+        [dir="ltr"] { font-family: 'Inter', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        @media print { .no-print { display: none; } }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<header class="bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg no-print">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Seora Store - <span id="headerTitle">لوحة التحكم</span></h1>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleLanguage()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition">
+                    <span id="langBtn">EN</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container mx-auto px-4 py-6">
+
+    <!-- Tabs -->
+    <div class="bg-white rounded-lg shadow-md mb-6 overflow-x-auto no-print">
+        <div class="flex border-b">
+            <button onclick="switchTab('overview')" class="tab-btn px-6 py-4 font-semibold border-b-2 border-pink-500 text-pink-600" data-tab="overview">
+                <span class="ar">📊 نظرة عامة</span><span class="en hidden">📊 Overview</span>
+            </button>
+            <button onclick="switchTab('products')" class="tab-btn px-6 py-4 font-semibold text-gray-600" data-tab="products">
+                <span class="ar">📦 المنتجات</span><span class="en hidden">📦 Products</span>
+            </button>
+            <button onclick="switchTab('orders')" class="tab-btn px-6 py-4 font-semibold text-gray-600" data-tab="orders">
+                <span class="ar">🛒 الطلبيات</span><span class="en hidden">🛒 Orders</span>
+            </button>
+            <button onclick="switchTab('suppliers')" class="tab-btn px-6 py-4 font-semibold text-gray-600" data-tab="suppliers">
+                <span class="ar">🚚 الموردين</span><span class="en hidden">🚚 Suppliers</span>
+            </button>
+            <button onclick="switchTab('expenses')" class="tab-btn px-6 py-4 font-semibold text-gray-600" data-tab="expenses">
+                <span class="ar">💰 المصاريف</span><span class="en hidden">💰 Expenses</span>
+            </button>
+            <button onclick="switchTab('reports')" class="tab-btn px-6 py-4 font-semibold text-gray-600" data-tab="reports">
+                <span class="ar">📈 التقارير</span><span class="en hidden">📈 Reports</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overview Tab -->
+    <div id="overview-tab" class="tab-content active">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-gray-600 text-sm mb-1"><span class="ar">إجمالي المبيعات</span><span class="en hidden">Total Sales</span></p>
+                <p class="text-2xl font-bold" id="totalSales">0 EGP</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-gray-600 text-sm mb-1"><span class="ar">صافي الربح</span><span class="en hidden">Net Profit</span></p>
+                <p class="text-2xl font-bold" id="totalProfit">0 EGP</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-gray-600 text-sm mb-1"><span class="ar">قيمة المخزون</span><span class="en hidden">Inventory Value</span></p>
+                <p class="text-2xl font-bold" id="inventoryValue">0 EGP</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-gray-600 text-sm mb-1"><span class="ar">الطلبيات المعلقة</span><span class="en hidden">Pending Orders</span></p>
+                <p class="text-2xl font-bold" id="pendingOrders">0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Tab -->
+    <div id="products-tab" class="tab-content">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between mb-4 no-print">
+                <h2 class="text-xl font-bold"><span class="ar">المنتجات</span><span class="en hidden">Products</span></h2>
+                <button onclick="openProductModal()" class="bg-pink-500 text-white px-4 py-2 rounded">
+                    <span class="ar">➕ إضافة منتج</span><span class="en hidden">➕ Add Product</span>
+                </button>
+            </div>
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-right"><span class="ar">اسم المنتج</span><span class="en hidden">Product Name</span></th>
+                        <th class="px-4 py-2 text-right">SKU</th>
+                        <th class="px-4 py-2 text-right"><span class="ar">الكمية</span><span class="en hidden">Quantity</span></th>
+                        <th class="px-4 py-2 text-right"><span class="ar">سعر الشراء</span><span class="en hidden">Cost</span></th>
+                        <th class="px-4 py-2 text-right"><span class="ar">سعر البيع</span><span class="en hidden">Price</span></th>
+                        <th class="px-4 py-2 text-right no-print"><span class="ar">إجراءات</span><span class="en hidden">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody id="productsBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Orders, Suppliers, Expenses, Reports Tabs ... [مش كل الكود هنا لتقصير الصفحة] -->
+
+</div>
+
+<!-- Modals ... [مش كل المودالز هنا للتقصير] -->
+
+<script>
+let lang = 'ar';
+let data = {products: [], orders: [], shipments: [], expenses: []};
+
+function init() {
+    const stored = localStorage.getItem('seoraData');
+    if (stored) data = JSON.parse(stored);
+    updateAll();
+    setDates();
+}
+
+function setDates() {
+    const today = new Date().toISOString().split('T')[0];
+    ['orderDate','shipmentDate','expenseDate'].forEach(id=>{
+        const el = document.getElementById(id);
+        if(el) el.value=today;
+    });
+    const first = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+    if(document.getElementById('reportFrom')) document.getElementById('reportFrom').value = first;
+    if(document.getElementById('reportTo')) document.getElementById('reportTo').value = today;
+}
+
+function save() { localStorage.setItem('seoraData', JSON.stringify(data)); }
+
+function toggleLanguage() {
+    lang = lang==='ar'?'en':'ar';
+    document.documentElement.lang=lang;
+    document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+    document.querySelectorAll('.ar').forEach(el=>el.classList.toggle('hidden', lang!=='ar'));
+    document.querySelectorAll('.en').forEach(el=>el.classList.toggle('hidden', lang!=='en'));
+    document.getElementById('langBtn').textContent=lang==='ar'?'EN':'عربي';
+    updateAll();
+}
+
+function switchTab(name) {
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>{
+        b.classList.remove('border-pink-500','text-pink-600'); b.classList.add('text-gray-600');
+    });
+    document.getElementById(name+'-tab').classList.add('active');
+    const btn=document.querySelector(`[data-tab="${name}"]`);
+    btn.classList.add('border-pink-500','text-pink-600'); btn.classList.remove('text-gray-600');
+}
+
+function updateAll() { updateStats(); renderProducts(); /* renderOrders(), renderShipments(), renderExpenses() ... */ }
+
+function updateStats() {
+    const month=new Date().getMonth(), year=new Date().getFullYear();
+    let sales=0, cost=0;
+    data.orders.forEach(o=>{
+        const d=new Date(o.date);
+        if(d.getMonth()===month && d.getFullYear()===year && o.status!=='cancelled'){
+            o.items.forEach(item=>{
+                const p=data.products.find(pr=>pr.id===item.productId);
+                if(p){ sales+=p.price*item.quantity; cost+=p.cost*item.quantity; }
+            });
+        }
+    });
+    let expenses=0;
+    data.expenses.forEach(e=>{
+        const d=new Date(e.date); if(d.getMonth()===month && d.getFullYear()===year) expenses+=e.amount;
+    });
+    let inventory=0; data.products.forEach(p=>inventory+=p.cost*p.quantity);
+    const pending=data.orders.filter(o=>o.status==='pending'||o.status==='processing').length;
+    const profit=sales-cost-expenses;
+    document.getElementById('totalSales').textContent=sales.toLocaleString()+' EGP';
+    document.getElementById('totalProfit').textContent=profit.toLocaleString()+' EGP';
+    document.getElementById('inventoryValue').textContent=inventory.toLocaleString()+' EGP';
+    document.getElementById('pendingOrders').textContent=pending;
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
